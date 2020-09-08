@@ -1,0 +1,15 @@
+<% title= "Nos Films" %>
+<%- include('partials/header'), {title: "Nos Titres"} %>
+        <h1>Voici la liste de nos films</h1>
+        <div>
+            <ul>
+                <% for(title of films) {%>
+                    <li><%=title%></li>
+                <%} %>
+            </ul>
+        </div>
+    </div>
+<%- include('partials/footer'), %>
+
+
+

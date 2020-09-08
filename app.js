@@ -12,6 +12,51 @@ const express = require('express');
 */
 const app = express();
 
+
+/*
+**  Obligation d'utiliser un middleware pour le fichier css
+**  (middleware = qui permetvd'ajouter des fonctionnalités
+**  supplémentaires)
+**
+**  app.use() => quels middlewares veut on ajouter?
+**
+**  ici le chemin /public est préfixé pour les fichiers statiques.
+*/
+
+app.use('/public', express.static('public'))
+
+/*
+**  Le probleme ici c'est que l'on est limité dans la
+**  reponse renvoyée.
+**  Théoriquement on pourrait renvoyer des div/formulaire
+**  mais c'est laid et complexe a mettre en place.
+**
+**  On va donc utiliser le module EJS qui est un moteur
+**  de template javascript.
+**
+**  On l'installe avec la commande :
+**  npm install ejs --save (on le veut en prod)
+*/
+
+/*
+**  On indique a node que l'on va avoir des views dans le
+**  dossier ./views.
+*/
+app.set('vews', './views');
+
+/*
+**  On indique le "view engines" utilisé.
+**  Ici c'est ejs.
+*/
+
+app.set('view engine', 'ejs');
+
+/*
+**  Maintenant on peut creer notre premiere view dans ./views
+*/
+
+const films = ['Le seigneur des anneaux', 'Inception', 'Willow', 'Le dernier des Mohicans', 'Mission', 'Titanic'];
+
 /*
 **  ===========CREATION DES ROUTES==============
 **
@@ -47,16 +92,41 @@ app.get('/movies/add', (req, res) => {
 app.get('/movies/:id', (req, res) => {
     //On recupere l'id
     const id = req.params.id;
-    res.send(`<h1 style="text-align:center"> Détails du film n°${id} !</h1>`);
+    /*
+    **  Ici on passe id au template.
+    **  On pourra ainsi l'utiliser.
+    **  On passe bien un OBJET contenant
+    **  une propriété id.
+    */
+    res.render('movie-details', 
+        {
+            id,
+            title : "Le hobbit : La désolation de Smaug"
+        }
+    );
 });
-
 
 app.get('/movies', (req, res) => {
-    res.send('<h1 style="text-align:center"> Voici nos films !</h1>');
+    res.render('movies', {
+        films: films
+    });
 });
 
+app.get('/series', (req, res) => {
+    res.render('series.ejs');
+});
+
+/*
+**  Ici on utilise la methode render pour indiquer que
+**  l'on veut "rendre un template".
+*/
 app.get('/', (req, res) => {
-    res.send('<h1 style="text-align:center"> Hello tout le monde !</h1>');
+    //On ne met pas le chemin car on l'a indiqué dans set.
+    //Ni le .ejs
+    res.render('index', 
+    {
+        title: "Express Movies",
+    });
 });
 
 /*
@@ -64,6 +134,15 @@ app.get('/', (req, res) => {
 **      c'est plus maintenable que de l'écrire en dur.
 */
 const PORT = 3000;
+
+
+/*
+**  ==================================
+**  ===========Requete API============
+**  ==================================
+*/
+
+
 
 /*
 **  5/  On doit écouter sur un port.
@@ -84,6 +163,7 @@ app.listen(PORT, () => {
 **      On peut donc se rendre sur l'addresse :
 **      http://localhost:3000
 */
+
 
 /*
 **  /!\ CONSEIL : Installer le package nodemon pour ne
@@ -113,3 +193,5 @@ app.listen(PORT, () => {
 **  /!\ On est obligé d elancer la commande suivante 
 **      "npm run dev". (car npm start === npm run start avec un alias)
 */
+
+

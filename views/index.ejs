@@ -1,0 +1,47 @@
+<%- include('partials/header'), {title: title} %>
+    <h1 class="text-center">Express Movies : le site des cinéphiles</h1>
+    <div class="text-center my-5">
+        <h5>
+            Plutôt films ou séries ? 🎥</br>
+            Peu importe, vous trouverez votre bonheur ici !
+        </h5>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-sm-6 mb-2">
+          <div class="card border-info">
+            <img class="card-img-top img-fluid" style="height:275px" src="https://previews.123rf.com/images/maikikapetan25/maikikapetan251510/maikikapetan25151000001/46507056-canon.jpg" alt="Card image">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Nos Films</h2>
+                    <blockquote class="blockquote text-center my-4">
+                        <p class="mb-0">
+                            “Une vodka-Martini. Mélangée au shaker, pas à la cuillère.”
+                          </p>
+                          <footer class="blockquote-footer">Bond... James Bond</footer>
+                      </blockquote>
+                      <a href="/movies" class="btn btn-outline-info btn-lg">Accéder à nos Films</a>
+                  </div>
+            </div>
+        </div>
+        <div class="col-sm-6 mb-2">
+            <div class="card border-success">
+            <img class="card-img-top img-fluid" style="height:275px" src="https://previews.123rf.com/images/thjothvald/thjothvald1810/thjothvald181000003/109847943-heart-shaped-donut-simpsons-theme-homers-delicious-love-donut-like-food-art-sweet-cake-.jpg" alt="Card image">
+            <div class="card-body text-center">
+              <h2 class="card-title">Nos Séries</h2>
+              <blockquote class="blockquote text-center my-4">
+                <p class="mb-0">
+                    “J’suis pas en état de conduire. Mais attends, il faut pas que je m’écoute, j’suis bourré !”
+                  </p>
+                  <footer class="blockquote-footer">Homer Simpson</footer>
+              </blockquote>
+              <a href="/series" class="btn btn-outline-success btn-lg">Accéder à nos Séries</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+</div>
+    <%- include('partials/footer'), %>
+</body>
+</html>
