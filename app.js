@@ -25,6 +25,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 /*
+**  On fait un require de axios
+*/
+
+const axios = require('axios');
+
+/*
 **  On installe multer pour permetre de poster un
 **  formulaire avec ajax. 
 */
@@ -106,12 +112,6 @@ let films = [
 */
 
 /*
-**  Cette route est déclarée en premiere car c'est la plus spécifique !
-*/
-app.get('/movies/add', (req, res) => {
-    res.send(`<h1 style="text-align:center"> L'ajout des films est bientôt disponible !</h1>`);
-});
-/*
 **  Ici notre route prend un parametre (id)
 **  On pourra afficher des details pour ce film !
 */
@@ -131,6 +131,12 @@ app.get('/movies/:id', (req, res) => {
         }
     );
 });
+
+app.get('/movie-search', (req, res) => {
+    res.render('movie-search', {
+        axios
+    });
+})
 
 /*
 **  En get sur /movies

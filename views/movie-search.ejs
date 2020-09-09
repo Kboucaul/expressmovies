@@ -1,0 +1,90 @@
+<%- include('partials/header', {title: "Recherche"}) %>
+<h1>Votre recherche sur <strong>The Movie Database</strong></h1>
+<div class="my-5">
+    <input type="text" name="search" id="search" placeholder="Rechercher un film"/>
+    <button class="btn btn-info" id="btn-search">Rechercher</button>
+</div>
+<div id="result">
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+//On stock notre clé de l'api
+const API_KEY = "55724d5175ee1738864da44c40c075a5";
+//On recupere notre input
+let words = document.querySelector('#search');
+//On recupere notre boutton
+const buttonSearch = document.querySelector('#btn-search');
+
+/*
+**  Fonction qui affiche les suggestions de films
+*/
+
+function displaySuggestion(results)
+{
+    console.log(results);
+
+    //  On vide son contenu
+    resultDiv.innerHTML = '';
+    //On itere sur chaque objet du tableau
+    let moviesDiv = document.createElement('div');
+    let moviesUnorderedList = document.createElement('ul');
+    for(let result of results)
+    {
+        //On crée une div
+        let movie = document.createElement('li');
+        movie.innerHTML = result.title;
+        movie.innerHTML += "<br/>";
+        movie.innerHTML += "(Note : " + result.vote_average + " / 10)";
+        moviesUnorderedList.appendChild(movie);
+    }
+    moviesDiv.appendChild(moviesUnorderedList);
+    resultDiv.appendChild(moviesDiv);
+
+}
+
+function search()
+{
+    //On créer une requete "dynamique"
+    const query = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${words.value}&language=fr-FR`;
+
+    axios.get(query)
+         .then((response) => {
+             displaySuggestion(response.data.results);
+         });
+}
+
+
+/*
+**  On ecoute l'evenement change sur l'input
+*/
+words.addEventListener('change', search);
+
+/*
+**  On ecoute l'evenement keyup sur l'input
+*/
+words.addEventListener('keyup', search);
+
+/*
+**  On ecoute l'evenement click sur le boutton search
+*/
+buttonSearch.addEventListener('click', search);
+
+/*
+**  On recupere la div result
+*/
+
+let resultDiv = document.querySelector('#result');
+
+
+
+
+
+
+
+
+
+</script>
+<%- include('partials/footer') %>
