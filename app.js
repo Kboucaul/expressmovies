@@ -132,12 +132,6 @@ app.get('/movies/:id', (req, res) => {
     );
 });
 
-app.get('/movie-search', (req, res) => {
-    res.render('movie-search', {
-        axios
-    });
-})
-
 /*
 **  En get sur /movies
 */
@@ -153,7 +147,7 @@ app.get('/movies', (req, res) => {
 **  Sinon erreur 404
 */
 
-let urlEncodedParser = bodyParser.urlencoded({ extended: false })
+//let urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
 /*
 **  Ce middleWare ne rentrera en action que sur cette route
@@ -190,6 +184,7 @@ let urlEncodedParser = bodyParser.urlencoded({ extended: false })
 /*
 **  Ici on post le formulaire mais avec multer
 */
+/*
 app.post('/movies', upload.fields([]), (req, res) => {
     if (req.body)
     {
@@ -214,7 +209,7 @@ app.post('/movies', upload.fields([]), (req, res) => {
         return res.sendStatus(500);
     }
 });
-
+*/
 
 app.get('/series', (req, res) => {
     res.render('series.ejs');
@@ -238,15 +233,6 @@ app.get('/', (req, res) => {
 **      c'est plus maintenable que de l'écrire en dur.
 */
 const PORT = 3000;
-
-
-/*
-**  ==================================
-**  ===========Requete API============
-**  ==================================
-*/
-
-
 
 /*
 **  5/  On doit écouter sur un port.

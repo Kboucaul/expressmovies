@@ -1,102 +1,92 @@
-<% title= "Nos Films" %>
-<%- include('partials/header'), {title: "Nos Titres"} %>
-        <h1>Voici la liste de nos films</h1>
-        <div>
-            <ul class='movies-list'>
-                <% for(film of films) {%>
-                    <li><%=film.title%> : <%= film.year %></li>
-                <%} %>
-            </ul>
-        </div>
-        <hr/>
-        <div>
-            <form action="/movies" method="post" enctype="multipart/form-data">
-               <label for="movietitle">Titre du film</label>
-               <input type="text" name="movietitle" id="movietitle"> 
-               <label for="movieyear">Année du film</label>
-               <input type="number" name="movieyear" id="movieyear">
-               <button type="submit" class="btn btn-info">Ajouter</button>
-            </form>
-        </div>
-    </div>
-<%- include('partials/footer'), %>
+<%- include('partials/header', {title: "Recherche"}) %>
+<h1 class="text-info">Nos Films</h1>
+<hr/>
+<div clas="my-5">
+    <h3 class="my-4">Votre recherche sur <strong>The Movie Database</strong></h3>
+    <input type="text" name="search" id="search" placeholder="Rechercher un film"/>
+    <button class="btn btn-info" id="btn-search">Rechercher</button>
+</div>
+<div id="result">
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+//On stock notre clé de l'api
+const API_KEY = "55724d5175ee1738864da44c40c075a5";
+//On recupere notre input
+let words = document.querySelector('#search');
+//On recupere notre boutton
+const buttonSearch = document.querySelector('#btn-search');
 
-    /*
-    **  Fonction chargée d'ajouter un film
-    **  via formulaire.
-    */
-    function addMovie(event)
+/*
+**  Fonction qui affiche les suggestions de films
+*/
+
+function displaySuggestion(results)
+{
+    console.log(results);
+
+    //  On vide son contenu
+    resultDiv.innerHTML = '';
+    //On itere sur chaque objet du tableau
+    let moviesDiv = document.createElement('div');
+    let moviesUnorderedList = document.createElement('ul');
+    for(let result of results)
     {
-        //Empeche le form d'etre posté
-        event.preventDefault();
-
-        /*  On verifie si le navigateur
-        **  est compatible avec fetch().
-        **
-        **  On fetch sur la route '/movies'
-        **  Avec la methode Post
-        **  Et le body sera un formData
-        **
-        **  => On recoit une reponse donc
-        **  on utilise .then.
-        */
-        if (window.fetch)
-        {
-            fetch('/movies', {
-                method: "POST",
-                body: new FormData(form)
-            })
-            .then(checkStatus)
-            .catch((error) => {
-                console.error('request failed', error)
-            });
-        }
-        else
-        {
-            //jquery
-            //XMLHTTPRequest
-        }
+        //On crée une div
+        let movie = document.createElement('li');
+        movie.innerHTML = result.title;
+        movie.innerHTML += "<br/>";
+        movie.innerHTML += "(Note : " + result.vote_average + " / 10)";
+        moviesUnorderedList.appendChild(movie);
     }
+    moviesDiv.appendChild(moviesUnorderedList);
+    resultDiv.appendChild(moviesDiv);
 
-    function checkStatus(response)
-    {
-        //  On verifie le status de la reponse
-        //  Si il est bon (entre 200 et 300)
-        if (response.status >= 200 && response.status < 300)
-        {
-            //On crée une div
-            let newMovieDiv = document.createElement('li');
+}
 
-            //On recupere le titre soumis
-            const movietitle = document.getElementById('movietitle').value;
-            
-            //On recupere l'année' soumise
-            const movieyear = document.getElementById('movieyear').value;
+function search()
+{
+    //On créer une requete "dynamique"
+    const query = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${words.value}&language=fr-FR`;
 
-            //on ajoute les données a cette div
-            newMovieDiv.innerHTML = `${movietitle} : ${movieyear}`;
+    axios.get(query)
+         .then((response) => {
+             displaySuggestion(response.data.results);
+         });
+}
 
-            //on ajoute l'enfant div au formulaire
-            document.querySelector('.movies-list').appendChild(newMovieDiv);
-            //On reset les données du formulaire
-            form.reset();
-        }
-    }
 
-    /*
-    **  Ici on fait une requete en ajax
-    **  pour poster notre formulaire sans
-    **  recharger la page.
-    */
+/*
+**  On ecoute l'evenement change sur l'input
+*/
+words.addEventListener('change', search);
 
-    //1- On recupere notre formulaire
-    const form = document.querySelector('form');
-    //2- On écoute l'evenement submit
-    form.addEventListener('submit', addMovie);
+/*
+**  On ecoute l'evenement keyup sur l'input
+*/
+words.addEventListener('keyup', search);
+
+/*
+**  On ecoute l'evenement click sur le boutton search
+*/
+buttonSearch.addEventListener('click', search);
+
+/*
+**  On recupere la div result
+*/
+
+let resultDiv = document.querySelector('#result');
+
+
+
+
+
+
+
 
 
 </script>
-
-
-
+<%- include('partials/footer') %>
