@@ -5,6 +5,7 @@
 */
 const express = require('express');
 
+
 /*
 **  2/  On crée une instance de notre application
 **      Ici express est une méthode.
@@ -12,6 +13,24 @@ const express = require('express');
 */
 const app = express();
 
+/*
+**  On fait un require du middleware body-parser
+**  Pour gerer les requetes en get
+*/
+
+const bodyParser = require('body-parser');
+const { urlencoded } = require('body-parser');
+//Pour utiliser un middleware on utilise app.use
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+/*
+**  On installe multer pour permetre de poster un
+**  formulaire avec ajax. 
+*/
+
+var multer  = require('multer');
+var upload = multer();
 
 /*
 **  Obligation d'utiliser un middleware pour le fichier css
@@ -55,7 +74,14 @@ app.set('view engine', 'ejs');
 **  Maintenant on peut creer notre premiere view dans ./views
 */
 
-const films = ['Le seigneur des anneaux', 'Inception', 'Willow', 'Le dernier des Mohicans', 'Mission', 'Titanic'];
+let films = [
+    {title: 'Le seigneur des anneaux', year: 2001},
+    {title: 'Inception', year: 2010},
+    {title: 'Willow', year: 1988},
+    {title: 'Le dernier des Mohicans', year: 1992},
+    {title: 'Mission', year: 1986}, 
+    {title: 'Titanic', year: 1997}
+];
 
 /*
 **  ===========CREATION DES ROUTES==============
@@ -106,11 +132,83 @@ app.get('/movies/:id', (req, res) => {
     );
 });
 
+/*
+**  En get sur /movies
+*/
+
 app.get('/movies', (req, res) => {
     res.render('movies', {
         films: films
     });
 });
+
+/*
+**  En post sur /moves (pour le formulaire)
+**  Sinon erreur 404
+*/
+
+let urlEncodedParser = bodyParser.urlencoded({ extended: false })
+
+/*
+**  Ce middleWare ne rentrera en action que sur cette route
+*/
+//app.post('/movies', urlEncodedParser, (req, res) => {
+    /*  On recupere les données postées
+    **  Obligation de passer par un middleWare
+    **  On agit bien sur req et pas sur res
+    **  On doit ouvrir une console côté serveur
+    **  ex : console ou on a lancé node
+    */
+
+    /*
+    **  Ici on recupere granulairement 
+    */
+  //  const title = req.body.movietitle;
+  //  const year = req.body.movieyear;
+    
+   //On ajoute le film
+    //    const newMovie = {
+    //        'title': title,
+    //        'year':  year
+    //    }
+        //films.push(newMovie);
+            //ou
+    //    films = [... films, newMovie];
+
+    //On doit toujours renvoyer quelque chose
+    //=> Sinon le serveur tourne a l'infini
+    //res.sendStatus(201); //Status quand on a crée qqchose
+//});
+
+
+/*
+**  Ici on post le formulaire mais avec multer
+*/
+app.post('/movies', upload.fields([]), (req, res) => {
+    if (req.body)
+    {
+        const formData = req.body;
+        console.log(formData);
+        
+        const title = req.body.movietitle;
+        const year = req.body.movieyear;
+    
+    //On ajoute le film
+        const newMovie = {
+            'title': title,
+            'year':  year
+        }
+        //films.push(newMovie);
+            //ou
+        films = [... films, newMovie];
+        return res.sendStatus(201);
+    }
+    else
+    {
+        return res.sendStatus(500);
+    }
+});
+
 
 app.get('/series', (req, res) => {
     res.render('series.ejs');
