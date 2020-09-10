@@ -1,0 +1,112 @@
+<%- include('partials/header'), {title: "Connexion"}%>
+
+<div class="my-3" id="login">
+    <h1 class="my-3">Connectez-vous</h1>
+    <form>
+        <div class="form-group">
+          <label for="email">Adresse Email</label>
+          <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Votre adresse email">
+          <small id="emailHelp" class="form-text text-muted">Nous ne communiquerons pas votre email</small>
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" class="form-control" id="password" placeholder="Mot de passe">
+        </div>
+        <button type="submit" class="btn btn-success">Se connecter</button>
+      </form>
+</div>
+<div id="logout" class="my-3 d-none">
+    <h1 class="my-3">Deconnectez-vous</h1>
+    <button class="btn btn-danger" id="btn-logout">
+        Déconnexion
+    </button>
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    var form = document.querySelector('form');
+    form.addEventListener("submit", loginUser);
+
+
+    //On recupere par id le loginDiv
+    const loginDiv = document.querySelector("#login");
+    //On recupere par id la div logout
+    const logoutDiv = document.querySelector("#logout");
+
+    //On recupere par id la div login dans nav-bar
+    const loginNav = document.querySelector("#nav-login");
+
+    //On recupere par id la div logout dans nav-bar
+    const logoutNav = document.querySelector('#nav-logout')
+
+    //On recupere par id le boutton de deconnexion
+    const btnLogout = document.querySelector('#btn-logout');
+
+
+    if (localStorage.getItem('token'))
+        switchToLoginMode();
+    else
+        switchToLogoutMode();
+
+
+    /*
+    **  On ecoute l'evenement click sur ce boutton
+    */
+   btnLogout.addEventListener('click', switchToLogoutMode);
+
+    /*
+    **  Cache la div login
+    **  Affiche le bouton deconnexion
+    */
+    function switchToLoginMode()
+    {
+        loginDiv.classList.add("d-none");
+        loginNav.classList.add("d-none");
+
+        logoutDiv.classList.remove("d-none");
+        logoutNav.classList.remove("d-none");
+    }
+    /*
+    **  Cache le bouton deconnexion
+    **  Affiche la div login
+    */
+    function switchToLogoutMode()
+    {
+        localStorage.removeItem('token');
+        logoutDiv.classList.add("d-none");
+        logoutNav.classList.add("d-none");
+
+        loginDiv.classList.remove("d-none");
+        loginNav.classList.remove("d-none");
+    }
+
+    function loginUser(event) {				
+        loginUserWithXHR(event);
+    }	
+    
+    function loginUserWithXHR(event) {		
+        event.preventDefault();
+        console.log('loginUserWithXHR');		
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/login', true);
+        //Send the proper header information along with the request
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {//Call a function when the state changes.
+            if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                //On recupere le token
+                let token = xhr.response;
+                //On l'enregistre dans localeStorage
+                localStorage.setItem('token', token);
+                switchToLoginMode();
+                form.reset();
+            }
+        }				
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var payLoad = "email=" + email + "&" + "password=" + password; 
+        xhr.send(payLoad); 				
+    }
+</script>
+
+<%- include('partials/footer') %>

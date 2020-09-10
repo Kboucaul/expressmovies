@@ -36,8 +36,17 @@ const axios = require('axios');
 */
 
 var multer  = require('multer');
+const { render } = require('ejs');
 var upload = multer();
 
+/*
+**  On installe le middleware jsonwebtoken
+**  
+*/
+
+const jwt = require('jsonwebtoken');
+//notre secret
+const secret = "dzhuLUYIOIHISJ234zsgysvg3UC8QçRwfszbhdnomjsa432bHIUzsnIHSjsklsSMMSiJSj";
 /*
 **  Obligation d'utiliser un middleware pour le fichier css
 **  (middleware = qui permetvd'ajouter des fonctionnalités
@@ -147,7 +156,7 @@ app.get('/movies', (req, res) => {
 **  Sinon erreur 404
 */
 
-//let urlEncodedParser = bodyParser.urlencoded({ extended: false })
+let urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
 /*
 **  Ce middleWare ne rentrera en action que sur cette route
@@ -213,6 +222,52 @@ app.post('/movies', upload.fields([]), (req, res) => {
 
 app.get('/series', (req, res) => {
     res.render('series.ejs');
+});
+
+
+app.get('/login', (req, res) => {
+    res.render('login', {title: "Connexion"});
+});
+
+/*
+**  Creation d'un fake user
+*/
+
+const fakeUser = {
+    email:      "fake@mail.com",
+    password:   "password"
+};
+
+app.post('/login', urlEncodedParser, (req, res) => {
+    if (req.body)
+    {
+        userEmail = req.body.email;
+        userPassword = req.body.password;
+        if ((userEmail === fakeUser.email) && (userPassword === fakeUser.password))
+        {
+            /*
+            **  Création du token
+            **  La methode sign prend : 
+            **  -Un payload en 1er param (les données a crypter)
+            **  -Un secret en 2eme param.
+            */
+            const myToken = jwt.sign(
+                {
+                    issue:  "http://expressmovies.fr",
+                    user:   "Jog",
+                    scope:  "admin" 
+                }, secret
+            );
+            res.json(myToken);
+        }
+        else    
+        {
+            console.log("Erreur : mauvais identifiants");
+            return  res.sendStatus(401);
+        }
+    }
+    else
+        return res.sendStatus(500);
 });
 
 /*
@@ -284,4 +339,8 @@ app.listen(PORT, () => {
 **      "npm run dev". (car npm start === npm run start avec un alias)
 */
 
+/*
+**  Installation de json web token en --save
+**  Permet de recuperer et de signer un token
 
+*/
